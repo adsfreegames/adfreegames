@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pookie Network – Free Online Games</title>
+  <meta name="description" content="Pookie Network: Free ad-free HTML5 games, instant play browser games. No downloads needed, pure fun!" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="google-site-verification" content="IIZhZg9sP16YPWFU-3uABbS79MGK0MKFAl_vkn5QbCU" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --card-bg: #141414;
+      --primary: #ff562f;
+      --primary-light: #ff7a59;
+      --text: #ffffff;
+      --text-light: #888888;
+      --border: #222222;
+      --shadow: 0 4px 24px rgba(0,0,0,0.5);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --success: #22c55e;
+      --warning: #f59e0b;
+    }
+
+    .light-mode {
+      --bg: #f5f5f5;
+      --card-bg: #ffffff;
+      --text: #111111;
+      --text-light: #666666;
+      --border: #e0e0e0;
+      --shadow: 0 4px 24px rgba(0,0,0,0.1);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+      transition: var(--transition);
+    }
+
+    /* Loader */
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.6s ease;
+    }
+    #loader.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .loader-logo {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      font-weight: 800;
+      font-size: 2rem;
+      letter-spacing: -1px;
+    }
+    .loader-logo .o-circle {
+      width: 44px;
+      height: 44px;
+      background: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 2px;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    .loader-logo .games {
+      color: var(--primary);
+    }
+    .progress-bar {
+      width: 200px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin-top: 24px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      padding: 16px 24px;
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .light-mode header {
+      background: rgba(245, 245, 245, 0.95);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      font-weight: 800;
+      font-size: 1.5rem;
+      letter-spacing: -0.5px;
+      cursor: pointer;
+      color: var(--text);
+      flex-shrink: 0;
+    }
+    .logo .o-circle {
+      width: 32px;
+      height: 32px;
+      background: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 2px;
+    }
+    .logo .games {
+      color: var(--primary);
+    }
+
+    /* Search Bar */
+    .search-container {
+      flex: 1;
+      max-width: 400px;
+      position: relative;
+    }
+    .search-input {
+      width: 100%;
+      padding: 12px 16px 12px 44px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      color: var(--text);
+      font-size: 0.95rem;
+      transition: var(--transition);
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+    }
+
+    /* Header Actions */
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      position: relative;
+    }
+    .icon-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .icon-btn .badge {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      background: var(--primary);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 700;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Offline Indicator */
+    .offline-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: var(--warning);
+      color: #000;
+      text-align: center;
+      padding: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      z-index: 10000;
+      transform: translateY(-100%);
+      transition: transform 0.3s ease;
+    }
+    .offline-bar.show {
+      transform: translateY(0);
+    }
+
+    /* Category Tabs */
+    .category-tabs {
+      display: flex;
+      overflow-x: auto;
+      gap: 8px;
+      padding: 20px 24px;
+      background: var(--bg);
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .category-tabs::-webkit-scrollbar {
+      display: none;
+    }
+    .category-tab {
+      padding: 10px 20px;
+      background: var(--card-bg);
+      color: var(--text-light);
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: var(--transition);
+      border: 1px solid var(--border);
+    }
+    .category-tab.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    .category-tab:hover:not(.active) {
+      background: var(--border);
+      color: var(--text);
+    }
+
+    /* Main */
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 24px 100px;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 32px 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-title i {
+      color: var(--primary);
+    }
+
+    /* Games Grid */
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    @media(min-width: 640px) {
+      .games-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    }
+    @media(min-width: 1024px) {
+      .games-grid { grid-template-columns: repeat(4, 1fr); gap: 24px; }
+    }
+    @media(min-width: 1400px) {
+      .games-grid { grid-template-columns: repeat(5, 1fr); }
+    }
+
+    .game-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: var(--transition);
+      border: 1px solid var(--border);
+      position: relative;
+      group: true;
+    }
+    .game-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+      box-shadow: 0 12px 40px rgba(255, 86, 47, 0.15);
+    }
+    .game-img-container {
+      position: relative;
+      aspect-ratio: 1;
+      overflow: hidden;
+    }
+    .game-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: var(--transition);
+    }
+    .game-card:hover .game-img {
+      transform: scale(1.05);
+    }
+    .game-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+      opacity: 0;
+      transition: var(--transition);
+      display: flex;
+      align-items: flex-end;
+      padding: 16px;
+    }
+    .game-card:hover .game-overlay {
+      opacity: 1;
+    }
+    .play-icon {
+      width: 50px;
+      height: 50px;
+      background: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+    }
+    .favorite-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 36px;
+      height: 36px;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(10px);
+      border: none;
+      border-radius: 50%;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: var(--transition);
+      z-index: 10;
+    }
+    .game-card:hover .favorite-btn {
+      opacity: 1;
+    }
+    .favorite-btn:hover {
+      background: var(--primary);
+    }
+    .favorite-btn.active {
+      opacity: 1;
+      background: var(--primary);
+    }
+    .game-info {
+      padding: 16px;
+    }
+    .game-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .game-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: var(--text-light);
+    }
+    .game-rating {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: #fbbf24;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-light);
+    }
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    /* Game Detail */
+    #game-detail {
+      display: none;
+      max-width: 600px;
+      margin: 40px auto;
+      text-align: center;
+    }
+    #game-detail.active {
+      display: block;
+      animation: fadeIn 0.4s ease;
+    }
+    .detail-img-container {
+      width: 280px;
+      height: 280px;
+      margin: 0 auto 32px;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 2px solid var(--border);
+      position: relative;
+    }
+    #detail-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .detail-actions {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      display: flex;
+      gap: 8px;
+    }
+    .detail-action-btn {
+      width: 44px;
+      height: 44px;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(10px);
+      border: none;
+      border-radius: 50%;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      transition: var(--transition);
+    }
+    .detail-action-btn:hover {
+      background: var(--primary);
+    }
+    #detail-title {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .detail-category {
+      color: var(--primary);
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: inline-block;
+      padding: 6px 16px;
+      background: rgba(255, 86, 47, 0.1);
+      border-radius: 50px;
+    }
+    .detail-stats {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-bottom: 32px;
+      color: var(--text-light);
+    }
+    .stat {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 320px;
+      margin: 0 auto;
+    }
+    .btn {
+      padding: 16px 32px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-primary:hover {
+      background: var(--primary-light);
+      transform: scale(1.02);
+    }
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 2px solid var(--border);
+    }
+    .btn-secondary:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Share Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(10px);
+      z-index: 3000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal {
+      background: var(--card-bg);
+      border-radius: 24px;
+      padding: 32px;
+      max-width: 400px;
+      width: 100%;
+      border: 1px solid var(--border);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .modal-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-light);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .share-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .share-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      cursor: pointer;
+      transition: var(--transition);
+      color: var(--text);
+    }
+    .share-btn:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+    .share-btn i {
+      font-size: 1.5rem;
+    }
+    .share-btn span {
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .copy-link {
+      display: flex;
+      gap: 8px;
+    }
+    .copy-input {
+      flex: 1;
+      padding: 12px 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+    .copy-btn {
+      padding: 12px 20px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Game Player */
+    #game-player {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 2000;
+      flex-direction: column;
+    }
+    #game-player.active {
+      display: flex;
+    }
+    .player-header {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+    .player-info {
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(10px);
+      padding: 12px 20px;
+      border-radius: 50px;
+      color: white;
+      font-weight: 600;
+    }
+    .player-actions {
+      display: flex;
+      gap: 12px;
+    }
+    .player-btn {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 12px 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .player-btn:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+    #game-iframe {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .game-loader {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      z-index: 5;
+    }
+    .game-loader.active {
+      display: flex;
+    }
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(255,255,255,0.1);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Content Pages */
+    .content {
+      max-width: 800px;
+      margin: 40px auto;
+      line-height: 1.8;
+      color: var(--text-light);
+    }
+    .content h2 {
+      color: var(--text);
+      font-size: 2rem;
+      margin-bottom: 24px;
+    }
+    .content p {
+      margin-bottom: 16px;
+    }
+    .content a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    /* Bottom Bar */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 12px 0 calc(env(safe-area-inset-bottom, 12px) + 12px);
+      z-index: 1000;
+    }
+    .light-mode .bottom-bar {
+      background: rgba(245, 245, 245, 0.95);
+    }
+    .bottom-bar a {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: var(--text-light);
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 12px;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+    .bottom-bar a.active {
+      color: var(--primary);
+    }
+    .bottom-bar a i {
+      font-size: 1.3rem;
+    }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--success);
+      color: white;
+      padding: 14px 28px;
+      border-radius: 50px;
+      font-weight: 600;
+      z-index: 4000;
+      opacity: 0;
+      transition: all 0.3s ease;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    #toast.error {
+      background: #ef4444;
+    }
+
+    /* Section handling */
+    .section {
+      display: none;
+    }
+    .section.active {
+      display: block;
+      animation: fadeIn 0.4s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Keyboard hint */
+    .keyboard-hint {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      color: var(--text-light);
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .keyboard-hint.show {
+      opacity: 1;
+    }
+    .keyboard-hint kbd {
+      background: var(--bg);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: monospace;
+      border: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="offline-bar" id="offline-bar">
+    <i class="fas fa-wifi-slash"></i> You're offline. Some games may not work.
+  </div>
+
+  <div id="loader">
+    <div class="loader-logo">
+      <span>PO</span>
+      <div class="o-circle">
+        <svg width="24" height="24" viewBox="0 0 100 100" fill="none">
+          <circle cx="50" cy="50" r="45" stroke="white" stroke-width="8"/>
+          <path d="M50 5C28.5 5 11 22.5 11 44C11 65.5 28.5 83 50 83C61.5 83 71 72.5 71 61C71 49.5 61.5 39 50 39C38.5 39 29 28.5 29 17C29 5.5 38.5 5 50 5Z" fill="white"/>
+        </svg>
+      </div>
+      <span>Kie</span>
+      <span class="games">NETWORK</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  <header>
+    <div class="logo" onclick="goHome()">
+      <span>PO</span>
+      <div class="o-circle">
+        <svg width="18" height="18" viewBox="0 0 100 100" fill="none">
+          <circle cx="50" cy="50" r="45" stroke="white" stroke-width="8"/>
+          <path d="M50 5C28.5 5 11 22.5 11 44C11 65.5 28.5 83 50 83C61.5 83 71 72.5 71 61C71 49.5 61.5 39 50 39C38.5 39 29 28.5 29 17C29 5.5 38.5 5 50 5Z" fill="white"/>
+        </svg>
+      </div>
+      <span>Kie</span>
+      <span class="games">NETWORK</span>
+    </div>
+
+    <div class="search-container">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" class="search-input" id="search-input" placeholder="Search games..." autocomplete="off">
+    </div>
+
+    <div class="header-actions">
+      <button class="icon-btn" id="theme-toggle" title="Toggle Theme">
+        <i class="fas fa-moon"></i>
+      </button>
+      <button class="icon-btn" id="favorites-btn" onclick="showFavorites()" title="Favorites">
+        <i class="fas fa-heart"></i>
+        <span class="badge" id="fav-count" style="display:none">0</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="category-tabs" id="category-tabs"></div>
+
+  <main>
+    <section id="home" class="section active">
+      <div id="recently-played-section" style="display:none;">
+        <h2 class="section-title"><i class="fas fa-clock-rotate-left"></i> Recently Played</h2>
+        <div id="recently-played" class="games-grid"></div>
+      </div>
+
+      <h2 class="section-title" id="games-section-title"><i class="fas fa-fire"></i> All Games</h2>
+      <div id="games" class="games-grid"></div>
+      <div id="no-results" class="empty-state" style="display:none;">
+        <i class="fas fa-search"></i>
+        <h3>No games found</h3>
+        <p>Try a different search term or category</p>
+      </div>
+
+      <div id="game-detail">
+        <div class="detail-img-container">
+          <img id="detail-img" src="" alt="" />
+          <div class="detail-actions">
+            <button class="detail-action-btn" id="detail-fav-btn" title="Add to Favorites">
+              <i class="far fa-heart"></i>
+            </button>
+            <button class="detail-action-btn" onclick="openShareModal()" title="Share">
+              <i class="fas fa-share-nodes"></i>
+            </button>
+          </div>
+        </div>
+        <h2 id="detail-title"></h2>
+        <div class="detail-category" id="detail-category"></div>
+        <div class="detail-stats">
+          <div class="stat"><i class="fas fa-star"></i> <span id="detail-rating">4.5</span></div>
+          <div class="stat"><i class="fas fa-gamepad"></i> <span id="detail-plays">1.2k plays</span></div>
+          <div class="stat"><i class="fas fa-clock"></i> <span id="detail-time">5 min</span></div>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-primary" id="play-btn"><i class="fas fa-play"></i> Play Now</button>
+          <button class="btn btn-secondary" onclick="openShareModal()"><i class="fas fa-share"></i> Share Game</button>
+          <button class="btn btn-secondary" id="back-btn"><i class="fas fa-arrow-left"></i> Back to Games</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="favorites" class="section">
+      <h2 class="section-title"><i class="fas fa-heart"></i> Your Favorites</h2>
+      <div id="favorites-grid" class="games-grid"></div>
+      <div id="no-favorites" class="empty-state">
+        <i class="fas fa-heart-crack"></i>
+        <h3>No favorites yet</h3>
+        <p>Click the heart icon on any game to add it here</p>
+      </div>
+    </section>
+
+    <section id="about" class="section">
+      <div class="content">
+        <h2>About Pookie Network</h2>
+        <p>Pookie Network brings you the best free online games with zero ads and instant play. No downloads, no waiting—just pure gaming fun.</p>
+        <p>Our curated collection features hundreds of HTML5 games that work seamlessly on any device. From action-packed adventures to brain-teasing puzzles, there's something for everyone.</p>
+        <h3 style="margin-top:32px;margin-bottom:16px;">Keyboard Shortcuts</h3>
+        <p><kbd>ESC</kbd> - Exit game</p>
+        <p><kbd>F</kbd> - Toggle fullscreen</p>
+        <p><kbd>Space</kbd> - Play/Pause (in some games)</p>
+      </div>
+    </section>
+
+    <section id="privacy" class="section">
+      <div class="content">
+        <h2>Privacy Policy</h2>
+        <p>We respect your privacy. Pookie Network does not collect personal data. Games are loaded from trusted third-party sources.</p>
+        <p>We use local storage only to remember your theme preferences, favorites, and recently played games.</p>
+      </div>
+    </section>
+
+    <section id="terms" class="section">
+      <div class="content">
+        <h2>Terms of Service</h2>
+        <p>By using Pookie Network, you agree to use our platform responsibly. All games are provided as-is for entertainment purposes.</p>
+        <p>We are not responsible for content hosted on third-party game servers.</p>
+      </div>
+    </section>
+
+    <section id="contact" class="section">
+      <div class="content">
+        <h2>Contact Us</h2>
+        <p>Have questions or suggestions? We'd love to hear from you.</p>
+        <p>Email: <a href="mailto:hello@pookie.network">hello@pookie.network</a></p>
+        <p style="margin-top:24px;">
+          <a href="#" style="display:inline-flex;align-items:center;gap:8px;margin-right:16px;"><i class="fab fa-twitter"></i> Twitter</a>
+          <a href="#" style="display:inline-flex;align-items:center;gap:8px;"><i class="fab fa-discord"></i> Discord</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <div id="game-player">
+    <div class="player-header">
+      <div class="player-info" id="player-game-title">Game Title</div>
+      <div class="player-actions">
+        <button class="player-btn" id="fullscreen-btn" title="Fullscreen (F)">
+          <i class="fas fa-expand"></i>
+        </button>
+        <button class="player-btn" id="exit-game-btn">
+          <i class="fas fa-xmark"></i> Exit
+        </button>
+      </div>
+    </div>
+    <div class="game-loader" id="game-loader">
+      <div class="spinner"></div>
+      <p style="color:white;margin-top:16px;">Loading game...</p>
+    </div>
+    <iframe id="game-iframe" src="" allowfullscreen></iframe>
+  </div>
+
+  <div class="modal-overlay" id="share-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Share Game</h3>
+        <button class="modal-close" onclick="closeShareModal()"><i class="fas fa-xmark"></i></button>
+      </div>
+      <div class="share-grid">
+        <button class="share-btn" onclick="shareTo('twitter')">
+          <i class="fab fa-twitter" style="color:#1da1f2;"></i>
+          <span>Twitter</span>
+        </button>
+        <button class="share-btn" onclick="shareTo('facebook')">
+          <i class="fab fa-facebook" style="color:#4267B2;"></i>
+          <span>Facebook</span>
+        </button>
+        <button class="share-btn" onclick="shareTo('whatsapp')">
+          <i class="fab fa-whatsapp" style="color:#25d366;"></i>
+          <span>WhatsApp</span>
+        </button>
+        <button class="share-btn" onclick="shareTo('telegram')">
+          <i class="fab fa-telegram" style="color:#0088cc;"></i>
+          <span>Telegram</span>
+        </button>
+      </div>
+      <div class="copy-link">
+        <input type="text" class="copy-input" id="share-url" readonly>
+        <button class="copy-btn" onclick="copyShareLink()">Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-bar">
+    <a href="#home" class="active" onclick="goHome()">
+      <i class="fas fa-home"></i>
+      <span>Home</span>
+    </a>
+    <a href="#favorites" onclick="showSection('favorites')">
+      <i class="fas fa-heart"></i>
+      <span>Favorites</span>
+    </a>
+    <a href="#about" onclick="showSection('about')">
+      <i class="fas fa-circle-info"></i>
+      <span>About</span>
+    </a>
+    <a href="#contact" onclick="showSection('contact')">
+      <i class="fas fa-envelope"></i>
+      <span>Contact</span>
+    </a>
+  </nav>
+
+  <div class="keyboard-hint" id="keyboard-hint">
+    Press <kbd>ESC</kbd> to exit • <kbd>F</kbd> for fullscreen
+  </div>
+
+  <div id="toast"><i class="fas fa-check-circle"></i> <span id="toast-msg">Success!</span></div>
+
+  <script>
+    const gameList = [
+      { title: "8 Ball Pool", img: "https://play-lh.googleusercontent.com/bPz1guJ6FHF3oIOEy3KqwpaDDKO-hLRaZoyzmM8bLFLN8fWm6L0_EuUnkwv9iqPo3Ag=s255", url: "https://prod-web-pool.miniclip.com/mc?localmc", category: "Sports", rating: 4.8, plays: "50k" },
+      { title: "Dash Master 3D", img: "https://pocket-image-cache.com/212x212/https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj3VhvxNlDOV_t2AM1OOO9XCSDgRqEHPX0c57Hy-rY_41FPgY5THEPsVuzMPZZEsUQZXGQIzjS9Ft7tpMzEsoyW1tKXsN5ozoLs2QgjGVeJox7bgnqzqDecextimoEkInqMdsquEJOVsR7Qnfb9dwB4cAlMRF-crfA365rpZnQVvCACZlrBk5f77xTsZm9/s512/dash-master-3d.webp", url: "https://szhong.4399.com/4399swf//upload_swf/ftp46/chenling/20240306/07/index.html", category: "Racing", rating: 4.5, plays: "12k" },
+      { title: "Paperly: Paper Plane Adventure", img: "https://pocket-image-cache.com/212x212/https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgjqwDrtTi2waBjmQTummttIvfuGaZSjKcNH0JYanJKV9XxIfS3sYMkQiZgaFcYtcWPMieenNVNva4GOlL2fylHMwcb_gZzD_BmaMbiIxVf4yHB0jIfwNbJftflzZSFRlgqDowXKAw_9LS4ebWSj1uTaZz1ze2hP1DjsS9JzUkNeGh61oFKZCUuPB4HuJ18/s512/paperly-paper-plane-adventure.webp", url: "https://szhong.4399.com/4399swf//upload_swf/ftp45/chenling/20240126/02/index.htm", category: "Arcade", rating: 4.6, plays: "8k" },
+      { title: "Railbound", img: "https://pocket-image-cache.com/212x212/https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjRZbS6rozS57ETj9rl8-oot1mV8698hzz2yyh8wTXJZumri4EAB3w-Cl4sCgOu3hW6cu24F9cIT578P6vlLLKrklL0Qgwcay5tVRYIulmPZZA4izuhUCXFc5MvX3ITphS6GaP9QqXpgqK49CMyri6yhxKRNmEZLqk4mH1Ftm03iiYNXcxOC8oPp6PziJzN/s512/railbound.webp", url: "https://szhong.4399.com/4399swf//upload_swf/ftp45/chenling/20231228/08/index.html", category: "Puzzle", rating: 4.7, plays: "15k" },
+      { title: "Smarty Bubbles 2", img: "https://pocket-image-cache.com/160x160/https://img.cdn.famobi.com/portal/html5games/images/tmp/160/SmartyBubbles2Teaser.jpg", url: "https://games.cdn.famobi.com/html5games/s/smarty-bubbles-2/v200/?fg_domain=play.famobi.com&fg_aid=A-FAMOBI-COM&fg_uid=22d86193-c681-45c4-9f4d-8d5aab731603&fg_pid=96ab9c2f-6013-4b31-96dc-ccb5c7a89329&fg_beat=568&original_ref=", category: "Puzzle", rating: 4.4, plays: "22k" },
+      { title: "Telekinesis Drive", img: "https://pocket-image-cache.com/212x212/https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiCB1UBmg9wOggp-5a5ehG91DJawaHuLDVsPR_AjqhwbDidU_yTyGsqrATPzBE4sCBuC1KLd4AQhsq4cXfRiubgCY410lNWgUJfKEKyocLAz5uqHyR5k3VV_CEugQQK4c5ZLD3mvqPBH_lGgJXFY-ruHPReFD8uITj9duf_i8-y4tpWR2SUkayKLqX7yxbL/", url: "https://szhong.4399.com/4399swf//upload_swf/ftp45/chenling/20231111/06/index.html", category: "Action", rating: 4.3, plays: "6k" },
+      { title: "Carrom Clash", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDRVwYVA3MPJzKP6NnrAD0MGG0U9g5Qtm1Riqu1w926A&s=10", url: "https://carromclash.h5games.usercontent.goog/v/2c8af22a-0d67-4b42-a42c-09eca14632c4/?origin=https%3A%2F%2Fgamesnacks.com&gameCenterId=gamesnacks", category: "Sports", rating: 4.5, plays: "18k" },
+      { title: "Temple Run 2", img: "https://pocket-image-cache.com/212x212/https://img.poki.com/f4b3ac7fe25cad9bc028b33f7a407f28.png", url: "https://sxiao.4399.com/4399swf//upload_swf/ftp35/gamehwq/20210119/11/index.html", category: "Adventure", rating: 4.9, plays: "100k" },
+      { title: "Subway Surfers: London", img: "https://1.bp.blogspot.com/-TRCbIrAahao/YTmvSLaTfKI/AAAAAAAAADU/H0x9-DSQB30qUHNttdT9LWLe2C6fB7e2ACLcBGAsYHQ/w160-h160-c/subway-surfers-london.jpg", url: "https://szhong.4399.com/4399swf//upload_swf/ftp36/liuxinyu/20210810/jjjj3/index.html", category: "Racing", rating: 4.7, plays: "75k" },
+      { title: "Push The Colors", img: "https://pocket-image-cache.com/212x212/https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgdoiZS_d4_JBjYLJqNlmU5TVNdu5g7kWVsDWXH666nfReGvpVZcMUJtbjVcjAnWXTpvFH8kyDpeI8xN6RVh80a_0ra4xXb7k03XdwBrz64DnM461to_D-HnvXDbSubQvJ-4RJ2JuqAbYodgVuY3xP5x8W7wgbwqbKv0qy_B7ZbIMfAWlZ_4t5uS8NI_JzU/s512/push-the-colors.webp", url: "https://szhong.4399.com/4399swf//upload_swf/ftp46/chenling/20240227/03/index.html", category: "Puzzle", rating: 4.2, plays: "5k" },
+      { title: "Penalty Rivals", img: "https://pocket-image-cache.com/212x212/https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj_YRmWxqhfS_NOODkJt9pS_Fd0X1pajRgsh36rD3U3HvbTo3_oqIVACzbPqZIcfXFaBXnQCXZMShm1dQiPOlYR1eLWZ9qspcIs-uaGaWdMp_kbZNj_BLhQd9nWqY5Fk3V9aCUQ-mxqlT-gu7Z1j1TULwkbHdPTuQ2U__mRU0qmIJCq0zsrfRt3ZrAlEIZt/", url: "https://szhong.4399.com/4399swf//upload_swf/ftp45/chenling/20231205/15/index.html", category: "Sports", rating: 4.4, plays: "9k" },
+      { title: "Only Up 3D Parkour", img: "https://pocket-image-cache.com/212x212/https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiIdAGFLYoDD3nHNiOHGBwm3SN-p2QyDBNp2FLPLClZoF8FPuIKAJEde-Xykd4XJgFPh_gAgpzUN0Tls_vcP8gPq924pMlXA1q5HEsPZ2ldkWX4CbgMkH12EIclB-NEUwKoEJZPYfH5ffCnP14Jn32oNNkqvldPN-c95IEq8VzIumVru2aKB35peQBFEMs2/", url: "https://szhong.4399.com/4399swf//upload_swf/ftp44/chenling/20230826/01/index.html", category: "Action", rating: 4.6, plays: "11k" },
+      { title: "Ninja Rabbit", img: "https://pocket-image-cache.com/212x212/https://img.gamedistribution.com/164c65a559294ed6894875afde019476-512x512.jpeg", url: "https://szhong.4399.com/4399swf//upload_swf/ftp35/gamehwq/20210326/11/index.html", category: "Arcade", rating: 4.1, plays: "7k" },
+      { title: "Bike Rider: Moto Traffic", img: "https://pocket-image-cache.com/212x212/https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhmMBP5OyDB_tNOFNHbDFdpaY77Vucpi2jewCfkYrBHc5xWwtGoZT8jE7O9X2yVM6PDZoN0bhhiAsiBIQkpvIMnr7PMqah6iGk3XMBBMXg0G_A2bZjc3RQRfUYS9pjDmeUGEkfFSJSc9uP8VESR6WGpUVrG7g2S0-6lkdhA19v6neT6J-jX3zpf2dt9Hf2J/s512/moto-traffic-rider.webp", url: "https://szhong.4399.com/4399swf//upload_swf/ftp45/chenling/20231207/04/index.html", category: "Racing", rating: 4.5, plays: "14k" },
+      { title: "Archery World Tour", img: "https://pocket-image-cache.com/160x160/https://img.cdn.famobi.com/portal/html5games/images/tmp/160/ArcheryWorldTourTeaser.jpg", url: "https://games.cdn.famobi.com/html5games/a/archery-world-tour/v460/?fg_domain=play.famobi.com&fg_aid=A-FAMOBI-COM&fg_uid=ebcb987a-3fd0-4b4a-bae6-f456fff9cac3&fg_pid=96ab9c2f-6013-4b31-96dc-ccb5c7a89329&fg_beat=270", category: "Sports", rating: 4.3, plays: "10k" },
+      { title: "Chess Classic", img: "https://pocket-image-cache.com/160x160/https://img.cdn.famobi.com/portal/html5games/images/tmp/ChessClassicTeaser.jpg", url: "https://games.cdn.famobi.com/html5games/c/chess-classic/v310/?fg_domain=play.famobi.com&fg_aid=A-FAMOBI-COM&fg_uid=9fff4399-7428-43e6-a023-d2ecd21bae37&fg_pid=96ab9c2f-6013-4b31-96dc-ccb5c7a89329&fg_beat=686", category: "Strategy", rating: 4.8, plays: "30k" },
+      { title: "Knife Rain", img: "https://pocket-image-cache.com/160x160/https://img.cdn.famobi.com/portal/html5games/images/tmp/KnifeRainTeaser.jpg", url: "https://games.cdn.famobi.com/html5games/k/knife-rain/v820/?fg_domain=play.famobi.com&fg_aid=A-FAMOBI-COM&fg_uid=acf1dae7-f647-4107-b381-8817a18a6e4d&fg_pid=96ab9c2f-6013-4b31-96dc-ccb5c7a89329&fg_beat=550", category: "Arcade", rating: 4.2, plays: "8k" },
+      { title: "Snake.io", img: "https://play-lh.googleusercontent.com/NG4sZTG49qpKGd3tUxdoxbW2EXSp1-nAxcYr3XCO0SO1WO5P2sWkk0sBtUGZPYzPOU0=s160", url: "https://snake.io/crazygames/", category: "Arcade", rating: 4.4, plays: "45k" },
+      { title: "Flappy Bird", img: "https://play-lh.googleusercontent.com/a7R5nyeaX8lIEWdBOxjlvbyq9LcFwh3XMvNtBPEKR3LPGgdvgGrec4sJwn8tUaaSkw=s160", url: "https://s3-eu-west-1.amazonaws.com/apps.playcanvas.com/TAhlQLDa/index.html", category: "Arcade", rating: 4.0, plays: "200k" },
+      { title: "Chess", img: "https://play-lh.googleusercontent.com/a7R5nyeaX8lIEWdBOxjlvbyq9LcFwh3XMvNtBPEKR3LPGgdvgGrec4sJwn8tUaaSkw=s160", url: "https://ams.cdn.arkadiumhosted.com/assets/global/game/chess/", category: "Strategy", rating: 4.7, plays: "25k" },
+      { title: "Circle Rush", img: "https://pocket-image-cache.com/160x160/https://img.cdn.famobi.com/portal/html5games/images/tmp/CircleRushTeaser.jpg", url: "https://games.cdn.famobi.com/html5games/c/circle-rush/v010/?fg_domain=play.famobi.com&fg_aid=A-FAMOBI-COM&fg_uid=22b007ea-8606-4efb-8769-19e958cda522&fg_pid=96ab9c2f-6013-4b31-96dc-ccb5c7a89329&fg_beat=577", category: "Arcade", rating: 4.1, plays: "6k" },
+      { title: "Jewel Burst", img: "https://avatars.mds.yandex.net/get-games/1890793/2a0000016990c5443487c9cfff1bbddbabfa/default170x170", url: "https://app-96425.games.s3.yandex.net/96425/qklllwa0cdt7bl9nx5n1tgboadqvixdi/index.html", category: "Puzzle", rating: 4.5, plays: "13k" },
+      { title: "3D Penalty", img: "https://pocket-image-cache.com/160x160/https://img.cdn.famobi.com/portal/html5games/images/tmp/3DPenaltyTeaser.jpg", url: "https://games.cdn.famobi.com/html5games/0/3d-penalty/v040/?fg_domain=play.famobi.com&fg_aid=A-FAMOBI-COM&fg_uid=f6e2ba91-50ba-4bae-88a8-5f1434e6fa04&fg_pid=96ab9c2f-6013-4b31-96dc-ccb5c7a89329&fg_beat=372", category: "Sports", rating: 4.3, plays: "16k" },
+      { title: "Smarty Bubbles", img: "https://ik.imagekit.io/sjyfpsp1n/portal/html5games/images/tmp/160/SmartyBubbles20160620Teaser.jpg", url: "https://games.cdn.famobi.com/html5games/s/smarty-bubbles/v410/?fg_domain=play.famobi.com&fg_aid=A-FAMOBI-COM&fg_uid=d8f24956-dc91-4902-9096-a46cb1353b6f&fg_pid=96ab9c2f-6013-4b31-96dc-ccb5c7a89329&fg_beat=583", category: "Puzzle", rating: 4.4, plays: "20k" },
+      { title: "Slice Rush", img: "https://pocket-image-cache.com/160x160/https://img.cdn.famobi.com/portal/html5games/images/tmp/160/SliceRushTeaser.jpg", url: "https://games.cdn.famobi.com/html5games/s/slice-rush/v040/?fg_domain=play.famobi.com&fg_aid=A-FAMOBI-COM&fg_uid=346e8aee-6848-4974-a0cd-d19525a18c41&fg_pid=96ab9c2f-6013-4b31-96dc-ccb5c7a89329&fg_beat=474", category: "Arcade", rating: 4.2, plays: "9k" },
+      { title: "Fitness Empire", img: "https://pocket-image-cache.com/212x212/https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg8pjrqFMRYDeNaCbq206IBO08FRTyR3kyE3kqwIuRt0ElxaonV8C-5eDg-UWagtIbQOowlJ6jizrF1QU7PQUxQ7J30eZGElmwR2Y0W2Jg7hlKEDSC88AgP7uC9i09kc8P0q2GG_C2Wczc1EdXZaDUb0P40u10B6E8QSSHCHvm7H657Jh_QpR3CI_agV_bx/s256/fitness-empire-business-simulator.webp", url: "https://szhong.4399.com/4399swf//upload_swf/ftp45/chenling/20231214/06/index.html", category: "Casual", rating: 4.0, plays: "4k" },
+      { title: "Bee Colony", img: "https://pocket-image-cache.com/212x212/https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj1V8aHpal1iUkWFZXo46-6lpmk12_CLHqyfZbmaLRl3BV49Pta2k2q0BeE5okpDjSr9JuFv3GQ1CsfUztQQJsBbecAPo4i3rEjXpbrkkyGsSa-2WMe14gDEi-4p_Arhqxro-6Scc5siJN6PZlabQmN7eLo6L2IXXTSJa2BVNdf7-C5_CdO1XxrDFwFI-uM/s434/bee-colony.webp", url: "https://szhong.4399.com/4399swf//upload_swf/ftp47/chenling/20240627/10a/index.htm", category: "Casual", rating: 4.3, plays: "3k" },
+      { title: "Jump Control", img: "https://pocket-image-cache.com/212x212/https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhmLJXOaJRQzpjnNb3bHQtTh8KsFHjeU97S84t4ZaMrE7fmFqesk0SAdh216q0nrtJX_VDxeqkpYIxFPJOsIhqE5ceHHHWjhIT-XHXtQfOSdfVRnT_OE413ymC68ANh0pFR4cpLLmzfITkCNx0omIJ15Y9Rv8cJm0BFYz9ofAeSAx2FagcodqV5D_Mp-2QS/", url: "https://szhong.4399.com/4399swf//upload_swf/ftp44/chenling/20231008/04/index.html", category: "Action", rating: 4.1, plays: "5k" },
+      { title: "Temple Run 2: Holi Festival", img: "https://pocket-image-cache.com/212x212/https://img.poki.com/c97a8c0aef7f7c688e389ca81b894e94.png", url: "https://sda.4399.com/4399swf//upload_swf/ftp36/liuxinyu/20210628/jjjj1/index.html", category: "Adventure", rating: 4.8, plays: "35k" },
+      { title: "Merge Archers", img: "https://pocket-image-cache.com/212x212/https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgeoCFYCo3g0rtRmD0_xvYpGk190i49XbxGb4Y5c6N7Tjrgx7SYCN8OPu681UBWnqz4_e8IzBIzvdOOWvJssxM-Hg0qw9u_oPko9vnNjMJuYbRMkBT_aaaovauuMSlVJEpa8Q6F0fQNSo0Kegj9U6QHQHKsg0quw6aCclqbXYVJZmeESQfNdeh9bwuzUGG7/", url: "https://szhong.4399.com/4399swf//upload_swf/ftp45/chenling/20240117/04/index.html", category: "Strategy", rating: 4.4, plays: "7k" },
+      { title: "Pipe Puzzle", img: "https://pocket-image-cache.com/160x160/https://img.cdn.famobi.com/portal/html5games/images/tmp/PipePuzzleTeaser.jpg", url: "https://games.cdn.famobi.com/html5games/p/pipe-puzzle/67ed3502/?fg_domain=play.famobi.com&fg_aid=A-FAMOBI-COM&fg_uid=46aa94b9-da11-495c-b6da-3451e6fa0438&fg_pid=96ab9c2f-6013-4b31-96dc-ccb5c7a89329&fg_beat=409", category: "Puzzle", rating: 4.5, plays: "11k" },
+      { title: "BlackJack", img: "https://play-lh.googleusercontent.com/009hpXoLRxULWBEF8VsHnNTjFrOQVFKfkQfIxZcDGWtVSZEU5mKtSJyy3Zv3pxVcZQ=w160", url: "https://freegames.org/games/blackjack/v1/", category: "Casual", rating: 4.2, plays: "19k" },
+      { title: "Snakes And Ladders", img: "https://pocket-image-cache.com/160x160/https://cdn.jogos360.com.br/sn/ak/snakes-and-ladders-game-d.jpg", url: "https://cdn.gamesnacks.com/snakesandladders/gameCode/index.html", category: "Casual", rating: 4.0, plays: "28k" },
+      { title: "Baseball Game", img: "https://play-lh.googleusercontent.com/Aj3A_xOf0Ju4rFHCwSqj2DrduGNlOA9-Bnhp4WSjkbhXCuywRJ1BT6sBI37yy7zwZA", url: "https://flash-cdn.blogspot.com/2021/05/baseball.html", category: "Sports", rating: 4.1, plays: "8k" },
+      { title: "Slime Golf", img: "https://pocket-image-cache.com/212x212/https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiRLeQ2nOl-bwKiCLG6ELy39E7HIUUCLgWzigFF_voSLiHoS66C1FjZTprLBm_5-O0Hyi81cUQRhkc3D3cyLG8Zy7WdFCKGfCmHIAEK78ovCqURszfJSlnMsGU8Vm2oYb85OP2iicn5kw97a3rJYYNpstzlZfUoodcQeaosdm_a9ueIrVh3Tpm8puxznq1p/s256/slime-golf.webp", url: "https://szhong.4399.com/4399swf//upload_swf/ftp45/gamehwq/20231226/11a/index.html", category: "Sports", rating: 4.3, plays: "6k" },
+      { title: "Switch Wheel: Race Master", img: "https://pocket-image-cache.com/212x212/https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEipWoJ8BsjbpZQ49_X5S9_H3ORUZMPos11dNsY9bEEhe8U44__xI4Y3qER2fopwzVFOkJLx2ShCHQMW_Zqa1ramgHlSfQu4ZXIlR_znaQGy_fgCYr0BTFiLkvWglBlT8bC4ocdp-aFiAMcn5vUkhjtUV0g6kM72qwIsnPs3xpKvJG4RWoxS2jYIxtDvuz2p/s512/switch-wheel-race-master.webp", url: "https://szhong.4399.com/4399swf//upload_swf/ftp45/chenling/20240204/6a/index.htm", category: "Racing", rating: 4.4, plays: "10k" },
+      { title: "Clash Of Warriors", img: "https://pocket-image-cache.com/212x212/https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgf3-N5CRF6jRSMIPpdZXffigZdKaeGDO0HgIZvvULRbePRkqpCnH30Rjr4ZbLsEGcPJox0LCrAVFvcPIA46u4WvoarwLRjX4_AfYb86QD8oE9vbQFZsWXaiiu-9FrQM6YYcO4GgNF6DgWvpSArr5OPYThzy86WLr_MKFSJQ0U1Nd71NR22OaR3zM4p7leL/", url: "https://szhong.4399.com/4399swf//upload_swf/ftp48/gamehwq/20240809/09/index.html", category: "Action", rating: 4.5, plays: "12k" },
+      { title: "Bike Attack Race", img: "https://pocket-image-cache.com/212x212/https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEge7eGGk4RXv3yIl2yQi_AhXgWXSc3OetdkdDm1qCj7t6DdfX8W4EJur6mkHd5rhVNKQyJ4Wn-vcThgTFMgA4l33DdtODVWPHtfK3I8nzx9CI6PoAvcW-qpjaXJ2GNdfG5v6FVVCpL6uJQyOCVdo9BKUKAdkDbLtE9azURmbcpL43NLKoQdd3pAyg8jf4LY/s512/bike-attack-race.webp", url: "https://szhong.4399.com/4399swf//upload_swf/ftp45/chenling/20231225/06/index.htm", category: "Racing", rating: 4.3, plays: "8k" },
+      { title: "Tiger Run", img: "https://pocket-image-cache.com/212x212/https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhf1ekHKnxNcybqXTSOfj2UgqUXxcn_IcwIHoNGQ_VuauN9Go7X-1t5ltBeD9O7XM3gOFLb13AmJ-sLsWtTzCajx_7kfbrARYf6STkh2wMo8iPw8ZGISR2OzBbpJIPcFbSP6YgRkor9SLkjO35YfvZTf7_Yo4SwQeKN5EkAXyLj9lYoPdNepXvgEuY_HV7V/s512/tiger-run.webp", url: "https://szhong.4399.com/4399swf//upload_swf/ftp46/liuxinyu/20240309/1/index.htm", category: "Adventure", rating: 4.6, plays: "9k" },
+      { title: "Geometry Dash SubZero", img: "https://pocket-image-cache.com/212x212/https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjfg9PQEPNMXiOm63vvfXPc08LI8bXQnS67FCg9vdw0WZSbigsVtCnOcPZH1XlzBxxvzdhc1LLXz3TlmAMj_7KNVRctHZf0DzqqwSQSsMbeeuf-3mI4RCayvm96RsMd5mMQfUb7FYvJRUQuf4qSlgRI3FW6XFzT6WICkVqhgwaQVgkbSAK9HacCB_0yUh5H/s512/geometry-dash-subzero.webp", url: "https://szhong.4399.com/4399swf//upload_swf/ftp46/chenling/20240322/06/index.html", category: "Arcade", rating: 4.7, plays: "42k" },
+      { title: "Riders Downhill Racing", img: "https://pocket-image-cache.com/212x212/https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg2gjP29fKtzmzrE_yv3U1RPkX1glXpMP69zpPoiw4Jd1fcWL_hyPE0INbgoryTF2UsvxR0CIKfPfLL0-PKESQDEPVg0GkJVgUndJ858aCVTeTEaDBsFO58vh_jithIbZ7OKTNWfE19i8vNZ62DkM1TA_PqXL5SsBLbuUXGHkLf4tSyLbPaC-FppuaB6nLv/s512/riders-downhill-racing.webp", url: "https://szhong.4399.com/4399swf//upload_swf/ftp46/chenling/20240326/06/index.html", category: "Racing", rating: 4.4, plays: "7k" },
+      { title: "Hero Pipe Rescue", img: "https://pocket-image-cache.com/212x212/https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgR6X5lGDDzkA-ubuc0conN2PpIsavfGvf_oWDJ8vX81D91zHQnl_ZNfHVjLT2L8FZ9luYqr9SlyUkuBfWw4-d2eKxekg6cTOj8KWc5CN7r2H2laWB-1YgFDeJq_v1GnjSnxIztctNjUKUgeCH7OFf7GXjzbU5JO4o3z6tOu_ihNavBRRcgiLjrk2oUhTko/s460/hero-pipe-rescue-water-puzzle.webp", url: "https://szhong.4399.com/4399swf//upload_swf/ftp46/chenling/20240424/01/index.html", category: "Puzzle", rating: 4.5, plays: "6k" },
+      { title: "Money Man 3D", img: "https://pocket-image-cache.com/212x212/https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiZtHfTg8Fsh6QstYUxL3nWvkXabTXh6eKQ6MxDQQ3Ez-ox5t_k6fLY2elcxwdCbS3DZEEjERBnJyG4mal8IYdF7-ZCqgBEdFEkuK5XjHSEBUYZ63r1nG9gfRh0d4PVcIYz0rMgTwsykGZEaFLXmTU1R2NYv0aAn6I5mILVJ5Zt8PJePoVMw5WrMGBbL0ro/s512/money-man-3d.webp", url: "https://szhong.4399.com/4399swf//upload_swf/ftp45/gamehwq/20240221/09/index.html", category: "Casual", rating: 4.2, plays: "5k" },
+      { title: "Noob: Escape from Secret Prison 2", img: "https://pocket-image-cache.com/212x212/https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjM8J4zcDyBX6StSHcA1gnKtRnNVwzT9A6dTCQQpENeQ_Zz5dqpaNlYA7ui763dm7qnUf_3L8CdE8S_SiWTMHT1seED77_K-lyeEwuXDjxUMYIMpbGqirz1kt4tKX2FGwwdmpEe5anPwnkok1DpDqjaoNn5PIWLCyj3Ajw2Ydttk1WfkR_CgxOmahVKQ52-/s256/noob-escape-from-secret-prison-2.webp", url: "https://szhong.4399.com/4399swf//upload_swf/ftp46/chenling/20240328/09/index.html", category: "Adventure", rating: 4.6, plays: "8k" },
+      { title: "Little Big Fighter", img: "https://pocket-image-cache.com/212x212/https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi8UN6mgBAXVWvqxpg9Utz_1vC5UWiVTy8M5No7-E3gypvuhA4DOKTUIarKyD738pTTDq7UAIHuwkXLkvTS0m2vyD3ZPU1ZIodar9xRCr9fdOMXpCE2EFhl455-GcU8z4SLnf9omrSaUwukCsyVRRrBCd8Q5IRK2GFJLlsZIbdbDYhbDTi_w2PqA2dh1h7o/s512/little-big-fighters.webp", url: "https://szhong.4399.com/4399swf//upload_swf/ftp46/chenling/20240408/06/index.html", category: "Action", rating: 4.3, plays: "4k" },
+      { title: "Extreme Flip", img: "https://pocket-image-cache.com/212x212/https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEje21irX_VOGlKx1fw0HZp5o0cwMY38Z2O6BhELQiCIjk8q9PMMYd91B5hmgrzuN5HygFv4r7Pj_aXK5__ueI6KJFe0ZGjxC86TrjdDBzlhWuilzJM4bgWZSEn5YjcPs5yo-HhSO0uu4pBij8YF7WIPZuNUxNsh4ABSpcSBiUtYCQjHhCZXOnqutJXCxzoP/s256/extreme-flip.webp", url: "https://szhong.4399.com/4399swf//upload_swf/ftp46/chenling/20240402/15/index.html", category: "Action", rating: 4.4, plays: "6k" },
+      { title: "Offroad Climb 4x4", img: "https://pocket-image-cache.com/212x212/https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjGlfqcuYuvHG2uAOn7jiiTf8VMPAXK5z86KkyZGRGA_BwWPp0GDetUp5fVza_CQslu2LeP9rio-d3nvx9anopbQljYBfFXdCUhJFJdjdfOPELmZFC9hpaiGcJdZeEJpP0Fek-CVO4ToJUHKKpon0xlbnL8PtfP27CXUopFcH2cM6U4ALOslSasox3zmtEP/s512/offroad-climb-4x4.webp", url: "https://szhong.4399.com/4399swf//upload_swf/ftp46/chenling/20240321/06/index.htm", category: "Racing", rating: 4.5, plays: "11k" },
+      { title: "Geometries: Hardcore!", img: "https://pocket-image-cache.com/212x212/https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjgFpsQzdY7l0dGwyGE-uH0b13JKGzyG9hd42TO9Uu-M6rvvQ0kL_1z31UOOmYotln-7bIRkJfBV-0PVc8pXmHDWmaQPz1CIYCIDqV_Vvcx012EyoWUTOY8FSI5Jksm9rDpqZhP8EflnU_zGWBKvpazFXVVAVtmztO9RzqnjDZMO-d9v0Bk_7JsICTUHo6R/s470/geometries-hardcore.webp", url: "https://szhong.4399.com/4399swf//upload_swf/ftp46/chenling/20240326/04b/index.html", category: "Arcade", rating: 4.6, plays: "9k" },
+      { title: "Dart's Club", img: "https://pocket-image-cache.com/212x212/https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhbttHrsmLrHtellfcDhZFgfm-CyFR-jlqAqUxeMXtphP5l4HWW04fJeJUItd8hJTirbIuJvrfAY260FyFqP_zKxBYwInijOp241nkayMHOYKqI04b1Z-5WJnuLe1ElNV3PGAwG-i2FQd-iliOOmuYnR6UDv9mgiWjbWVwyYCkoDAPgmkZMzYUK3V60WUmD/s512/darts-club.webp", url: "https://szhong.4399.com/4399swf//upload_swf/ftp46/chenling/20240329/10a/index.html", category: "Sports", rating: 4.2, plays: "5k" }
+    ];
+
+    const el = {
+      loader: document.getElementById("loader"),
+      progressFill: document.getElementById("progress-fill"),
+      gamesGrid: document.getElementById("games"),
+      detail: document.getElementById("game-detail"),
+      detailImg: document.getElementById("detail-img"),
+      detailTitle: document.getElementById("detail-title"),
+      detailCategory: document.getElementById("detail-category"),
+      detailRating: document.getElementById("detail-rating"),
+      detailPlays: document.getElementById("detail-plays"),
+      detailFavBtn: document.getElementById("detail-fav-btn"),
+      playBtn: document.getElementById("play-btn"),
+      backBtn: document.getElementById("back-btn"),
+      player: document.getElementById("game-player"),
+      playerTitle: document.getElementById("player-game-title"),
+      iframe: document.getElementById("game-iframe"),
+      gameLoader: document.getElementById("game-loader"),
+      exitBtn: document.getElementById("exit-game-btn"),
+      fullscreenBtn: document.getElementById("fullscreen-btn"),
+      toast: document.getElementById("toast"),
+      toastMsg: document.getElementById("toast-msg"),
+      categoryTabs: document.getElementById("category-tabs"),
+      searchInput: document.getElementById("search-input"),
+      noResults: document.getElementById("no-results"),
+      gamesSectionTitle: document.getElementById("games-section-title"),
+      recentlyPlayedSection: document.getElementById("recently-played-section"),
+      recentlyPlayedGrid: document.getElementById("recently-played"),
+      favoritesGrid: document.getElementById("favorites-grid"),
+      noFavorites: document.getElementById("no-favorites"),
+      favCount: document.getElementById("fav-count"),
+      shareModal: document.getElementById("share-modal"),
+      shareUrl: document.getElementById("share-url"),
+      keyboardHint: document.getElementById("keyboard-hint"),
+      offlineBar: document.getElementById("offline-bar"),
+      themeToggle: document.getElementById("theme-toggle")
+    };
+
+    let currentGame = 0;
+    let currentCategory = "All";
+    let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+    let recentlyPlayed = JSON.parse(localStorage.getItem("recentlyPlayed") || "[]");
+
+    // Progress bar animation
+    let progress = 0;
+    const progressInterval = setInterval(() => {
+      progress += Math.random() * 15;
+      if (progress > 100) progress = 100;
+      el.progressFill.style.width = progress + "%";
+      if (progress === 100) clearInterval(progressInterval);
+    }, 200);
+
+    function hideLoader() {
+      el.loader.classList.add("fade-out");
+      setTimeout(() => {
+        el.loader.style.display = "none";
+      }, 600);
+    }
+
+    setTimeout(hideLoader, 1500);
+
+    function showToast(msg, isError = false) {
+      el.toastMsg.textContent = msg;
+      el.toast.className = isError ? "error" : "";
+      el.toast.classList.add("show");
+      setTimeout(() => el.toast.classList.remove("show"), 2500);
+    }
+
+    function goHome() {
+      document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+      document.getElementById("home").classList.add("active");
+      el.detail.classList.remove("active");
+      el.gamesGrid.style.display = "grid";
+      document.querySelectorAll(".bottom-bar a").forEach(a => a.classList.remove("active"));
+      document.querySelector(".bottom-bar a:first-child").classList.add("active");
+      el.searchInput.value = "";
+      currentCategory = "All";
+      renderCategories();
+      renderGames();
+      renderRecentlyPlayed();
+      window.scrollTo({top: 0, behavior: "smooth"});
+    }
+
+    function showSection(id) {
+      document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+      el.detail.classList.remove("active");
+      el.gamesGrid.style.display = (id === "home") ? "grid" : "none";
+      document.querySelectorAll(".bottom-bar a").forEach(a => a.classList.remove("active"));
+      document.querySelector(`.bottom-bar a[href="#${id}"]`)?.classList.add("active");
+      if (id === "favorites") renderFavorites();
+      window.scrollTo({top: 0, behavior: "smooth"});
+    }
+
+    function renderCategories() {
+      const categories = ["All", "Action", "Racing", "Puzzle", "Sports", "Arcade", "Adventure", "Strategy", "Casual"];
+      el.categoryTabs.innerHTML = "";
+      categories.forEach(cat => {
+        const tab = document.createElement("div");
+        tab.className = "category-tab" + (cat === currentCategory ? " active" : "");
+        tab.textContent = cat;
+        tab.onclick = () => {
+          currentCategory = cat;
+          renderCategories();
+          renderGames();
+        };
+        el.categoryTabs.appendChild(tab);
+      });
+    }
+
+    function createGameCard(g, index, showFav = true) {
+      const isFav = favorites.includes(index);
+      const card = document.createElement("div");
+      card.className = "game-card";
+      card.innerHTML = `
+        <div class="game-img-container">
+          <img class="game-img" src="${g.img}" loading="lazy" alt="${g.title}">
+          <div class="game-overlay">
+            <div class="play-icon"><i class="fas fa-play"></i></div>
+          </div>
+          ${showFav ? `<button class="favorite-btn ${isFav ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavorite(${index})">
+            <i class="${isFav ? 'fas' : 'far'} fa-heart"></i>
+          </button>` : ''}
+        </div>
+        <div class="game-info">
+          <div class="game-title">${g.title}</div>
+          <div class="game-meta">
+            <span>${g.category}</span>
+            <div class="game-rating">
+              <i class="fas fa-star"></i> ${g.rating}
+            </div>
+          </div>
+        </div>
+      `;
+      card.onclick = () => showDetail(index);
+      return card;
+    }
+
+    function renderGames(searchTerm = "") {
+      el.gamesGrid.innerHTML = "";
+      
+      let filteredGames = gameList;
+      
+      if (searchTerm) {
+        filteredGames = gameList.filter(g => 
+          g.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          g.category.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      } else if (currentCategory !== "All") {
+        filteredGames = gameList.filter(g => g.category === currentCategory);
+      }
+
+      if (filteredGames.length === 0) {
+        el.noResults.style.display = "block";
+        el.gamesSectionTitle.style.display = "none";
+      } else {
+        el.noResults.style.display = "none";
+        el.gamesSectionTitle.style.display = "flex";
+        filteredGames.forEach(g => {
+          const index = gameList.indexOf(g);
+          el.gamesGrid.appendChild(createGameCard(g, index));
+        });
+      }
+    }
+
+    function renderRecentlyPlayed() {
+      if (recentlyPlayed.length === 0) {
+        el.recentlyPlayedSection.style.display = "none";
+        return;
+      }
+      
+      el.recentlyPlayedSection.style.display = "block";
+      el.recentlyPlayedGrid.innerHTML = "";
+      
+      recentlyPlayed.slice(0, 5).forEach(index => {
+        if (gameList[index]) {
+          el.recentlyPlayedGrid.appendChild(createGameCard(gameList[index], index));
+        }
+      });
+    }
+
+    function renderFavorites() {
+      el.favoritesGrid.innerHTML = "";
+      
+      if (favorites.length === 0) {
+        el.noFavorites.style.display = "block";
+        return;
+      }
+      
+      el.noFavorites.style.display = "none";
+      favorites.forEach(index => {
+        if (gameList[index]) {
+          el.favoritesGrid.appendChild(createGameCard(gameList[index], index));
+        }
+      });
+    }
+
+    function toggleFavorite(index) {
+      const i = favorites.indexOf(index);
+      if (i > -1) {
+        favorites.splice(i, 1);
+        showToast("Removed from favorites");
+      } else {
+        favorites.push(index);
+        showToast("Added to favorites!");
+      }
+      localStorage.setItem("favorites", JSON.stringify(favorites));
+      updateFavCount();
+      renderGames(el.searchInput.value);
+      if (document.getElementById("favorites").classList.contains("active")) {
+        renderFavorites();
+      }
+      if (el.detail.classList.contains("active")) {
+        updateDetailFavButton();
+      }
+    }
+
+    function updateFavCount() {
+      el.favCount.textContent = favorites.length;
+      el.favCount.style.display = favorites.length > 0 ? "flex" : "none";
+    }
+
+    function updateDetailFavButton() {
+      const isFav = favorites.includes(currentGame);
+      el.detailFavBtn.innerHTML = `<i class="${isFav ? 'fas' : 'far'} fa-heart"></i>`;
+      el.detailFavBtn.className = "detail-action-btn" + (isFav ? " active" : "");
+      el.detailFavBtn.onclick = () => toggleFavorite(currentGame);
+    }
+
+    function addToRecentlyPlayed(index) {
+      recentlyPlayed = recentlyPlayed.filter(i => i !== index);
+      recentlyPlayed.unshift(index);
+      if (recentlyPlayed.length > 10) recentlyPlayed.pop();
+      localStorage.setItem("recentlyPlayed", JSON.stringify(recentlyPlayed));
+    }
+
+    function showDetail(i) {
+      currentGame = i;
+      const g = gameList[i];
+      el.detailImg.src = g.img;
+      el.detailTitle.textContent = g.title;
+      el.detailCategory.textContent = g.category;
+      el.detailRating.textContent = g.rating;
+      el.detailPlays.textContent = g.plays + " plays";
+      updateDetailFavButton();
+      el.detail.classList.add("active");
+      el.gamesGrid.style.display = "none";
+      el.recentlyPlayedSection.style.display = "none";
+      el.gamesSectionTitle.style.display = "none";
+      el.categoryTabs.style.display = "none";
+      window.scrollTo(0, 0);
+    }
+
+    el.playBtn.onclick = () => {
+      const g = gameList[currentGame];
+      addToRecentlyPlayed(currentGame);
+      el.playerTitle.textContent = g.title;
+      el.gameLoader.classList.add("active");
+      el.iframe.src = g.url;
+      el.player.classList.add("active");
+      el.keyboardHint.classList.add("show");
+      setTimeout(() => el.keyboardHint.classList.remove("show"), 5000);
+      
+      el.iframe.onload = () => {
+        el.gameLoader.classList.remove("active");
+      };
+    };
+
+    el.backBtn.onclick = () => {
+      el.detail.classList.remove("active");
+      el.gamesGrid.style.display = "grid";
+      el.recentlyPlayedSection.style.display = "block";
+      el.gamesSectionTitle.style.display = "flex";
+      el.categoryTabs.style.display = "flex";
+      renderRecentlyPlayed();
+    };
+
+    el.exitBtn.onclick = () => {
+      el.iframe.src = "";
+      el.player.classList.remove("active");
+      el.gameLoader.classList.remove("active");
+      if (document.exitFullscreen) document.exitFullscreen();
+    };
+
+    el.fullscreenBtn.onclick = () => {
+      if (el.player.requestFullscreen) el.player.requestFullscreen();
+      else if (el.player.webkitRequestFullscreen) el.player.webkitRequestFullscreen();
+    };
+
+    // Search functionality
+    el.searchInput.addEventListener("input", (e) => {
+      renderGames(e.target.value);
+    });
+
+    // Share modal
+    function openShareModal() {
+      const url = location.href.split("#")[0] + `#game=${currentGame}`;
+      el.shareUrl.value = url;
+      el.shareModal.classList.add("active");
+    }
+
+    function closeShareModal() {
+      el.shareModal.classList.remove("active");
+    }
+
+    function shareTo(platform) {
+      const g = gameList[currentGame];
+      const url = encodeURIComponent(location.href.split("#")[0] + `#game=${currentGame}`);
+      const text = encodeURIComponent(`Check out ${g.title} on Pookie Network!`);
+      
+      let shareUrl = "";
+      switch(platform) {
+        case "twitter": shareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${url}`; break;
+        case "facebook": shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`; break;
+        case "whatsapp": shareUrl = `https://wa.me/?text=${text}%20${url}`; break;
+        case "telegram": shareUrl = `https://t.me/share/url?url=${url}&text=${text}`; break;
+      }
+      
+      window.open(shareUrl, "_blank");
+      closeShareModal();
+    }
+
+    function copyShareLink() {
+      navigator.clipboard.writeText(el.shareUrl.value).then(() => {
+        showToast("Link copied!");
+        closeShareModal();
+      });
+    }
+
+    // Theme toggle
+    el.themeToggle.onclick = () => {
+      document.body.classList.toggle("light-mode");
+      const isLight = document.body.classList.contains("light-mode");
+      el.themeToggle.innerHTML = isLight ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+      localStorage.setItem("theme", isLight ? "light" : "dark");
+    };
+
+    // Keyboard shortcuts
+    document.addEventListener("keydown", (e) => {
+      if (el.player.classList.contains("active")) {
+        if (e.key === "Escape") {
+          el.exitBtn.click();
+        } else if (e.key === "f" || e.key === "F") {
+          el.fullscreenBtn.click();
+        }
+      }
+    });
+
+    // Online/Offline detection
+    window.addEventListener("online", () => {
+      el.offlineBar.classList.remove("show");
+      showToast("You're back online!");
+    });
+
+    window.addEventListener("offline", () => {
+      el.offlineBar.classList.add("show");
+    });
+
+    // Initialize
+    document.addEventListener("DOMContentLoaded", () => {
+      // Load theme
+      if (localStorage.getItem("theme") === "light") {
+        document.body.classList.add("light-mode");
+        el.themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+      }
+
+      renderCategories();
+      renderGames();
+      renderRecentlyPlayed();
+      updateFavCount();
+
+      // Check for shared game in URL
+      const hash = location.hash.slice(1);
+      if (hash && hash.startsWith("game=")) {
+        const i = parseInt(hash.split("=")[1]);
+        if (!isNaN(i) && gameList[i]) {
+          setTimeout(() => showDetail(i), 500);
+        }
+      }
+
+      // Check initial online status
+      if (!navigator.onLine) {
+        el.offlineBar.classList.add("show");
+      }
+    });
+  </script>
+</body>
+</html>
